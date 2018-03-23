@@ -28,6 +28,11 @@ import Flows
 /**
 A class that makes loading data from a protected endpoint easier.
 */
+
+public extension NSNotification.Name {
+    public static let p2_OAuth2_didAuthorize = NSNotification.Name("p2_OAuth2_didAuthorize")
+}
+
 open class OAuth2DataLoader: OAuth2Requestable {
 	
 	/// The OAuth2 instance used for OAuth2 access tokvarretrieval.
@@ -131,6 +136,7 @@ open class OAuth2DataLoader: OAuth2Requestable {
 						// dequeue all if we're authorized, throw all away if something went wrong
 						if nil != json {
 							self.retryAll()
+                            NotificationCenter.default.post(name: .p2_OAuth2_didAuthorize, object: self)
 						}
 						else {
 							self.throwAllAway(with: error ?? OAuth2Error.requestCancelled)
